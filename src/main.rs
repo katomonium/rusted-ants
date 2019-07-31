@@ -4,9 +4,9 @@ extern crate tsplib;
 extern crate rand;
 
 mod utils;
-mod ant;
-use utils::sparse_matrix::SparseMatrix;
-use ant::Ant;
+mod solver;
+use solver::colony::Colony;
+
 
 fn set_logger(level: u64) {
     use simplelog::*;
@@ -37,33 +37,40 @@ fn main() {
             clap::Arg::with_name("verbose")
                 .short("v")
                 .multiple(true)
-                .help("Sets the level of verbosity"),
+                .help("Sets the level of verbosity")
         )
         .arg(
             clap::Arg::with_name("input")
                 .help("The input file")
                 .required(true)
-                .index(1),
+                .index(1)
+        )
+        .arg(
+            clap::Arg::with_name("n_ants")
+                .help("The number of ants")
+                .required(true)
+                .index(2)
+        )
+        .arg(
+            clap::Arg::with_name("n_inter")
+                .help("The number of interations")
+                .required(true)
+                .index(3)
         )
         .get_matches();
 
     set_logger(matches.occurrences_of("verbose"));
+    info!("Everything done!");
 
     let file_path = matches.value_of("input").unwrap();
-    let r = utils::loader::open(file_path);
+    let instance = utils::loader::open(file_path).unwrap();
+    info!("Instance \"{}\" loaded", instance.name);
 
-    let matrix = SparseMatrix::new_from_instace(r.unwrap());
+    let n_ants = matches.value_of("n_ants").unwrap().parse::<usize>().unwrap();
+    let n_inter = matches.value_of("n_inter").unwrap().parse::<usize>().unwrap();
 
-    let mut pheromone = SparseMatrix::new(matrix.size(), matrix.size());
-    for i in 0..matrix.size() {
-        for j in 0..(i+1) {
-            pheromone.set(i, j, 1f64);
-        }
-    }
+    let mut colony = Colony::new(instance, n_ants, n_inter, 1f64, 1f64, 0.5);
+    let result = colony.run(0);
 
-    let mut ant = Ant::new(1f64, 3f64, &matrix, &pheromone);
-
-    ant.find_circuit(0);
-
-    println!("{:?}", ant.path);
+    println!("{:#?}", result);
 }

@@ -30,7 +30,7 @@ impl SparseMatrix {
             self.data.insert((j, i), value)
         }
     }
-
+    
     pub fn size(&self) -> usize {
         self.n
     }
