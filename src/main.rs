@@ -21,7 +21,6 @@ fn set_logger(level: u64) {
     };
 
     TermLogger::init(log_level, Config::default(), TerminalMode::Stderr).unwrap();
-    trace!("{}", level);
 }
 
 fn main() {
@@ -52,9 +51,18 @@ fn main() {
 
     let file_path = matches.value_of("input").unwrap();
     let r = utils::loader::open(file_path);
+
     let matrix = SparseMatrix::new_from_instace(r.unwrap());
 
-    let mut ant = Ant::new(&matrix);
+    let mut pheromone = SparseMatrix::new(matrix.size(), matrix.size());
+    for i in 0..matrix.size() {
+        for j in 0..(i+1) {
+            pheromone.set(i, j, 1f64);
+        }
+    }
+
+    let mut ant = Ant::new(1f64, 3f64, &matrix, &pheromone);
+
     ant.find_circuit(0);
 
     println!("{:?}", ant.path);

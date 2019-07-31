@@ -15,7 +15,7 @@ impl SparseMatrix {
         SparseMatrix { n, m, data }
     }
 
-    pub fn get(&mut self, i: usize, j: usize) -> Option<&f64> {
+    pub fn get(&self, i: usize, j: usize) -> Option<&f64> {
         if i > j {
             self.data.get(&(i, j))
         } else {
