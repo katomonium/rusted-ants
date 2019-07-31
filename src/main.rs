@@ -1,11 +1,14 @@
+#[macro_use] extern crate log;
+extern crate simplelog;
 extern crate tsplib;
 
 mod utils;
+use utils::sparse_matrix::SparseMatrix;
 
 fn set_logger(level: u64) {
     use simplelog::*;
 
-    let log_level: LevelFilter = match level {
+    let log_level: LevelFilter = match level + 1 {
         0 => LevelFilter::Off,
         1 => LevelFilter::Error,
         2 => LevelFilter::Warn,
@@ -45,4 +48,7 @@ fn main() {
 
     let file_path = matches.value_of("input").unwrap();
     let _r = utils::loader::open(file_path);
+    let _matrix = SparseMatrix::new_from_instace(_r.unwrap());
+
+    println!("{:?}", _matrix);
 }
