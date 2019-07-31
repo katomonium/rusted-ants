@@ -31,6 +31,17 @@ impl SparseMatrix {
         }
     }
 
+    pub fn size(&self) -> usize {
+        self.n
+    }
+
+    pub fn neighboors_of(&self, index: usize) -> Vec<usize> {
+        // TODO: Implementar para matrix nao completas
+        let mut v: Vec<usize> = (0..self.n).collect();
+        v.retain(|&x| x != index);
+        v
+    }
+
     pub fn new_from_instace(instace: tsplib::Instance) -> SparseMatrix {
         use tsplib::EdgeWeightType;
 

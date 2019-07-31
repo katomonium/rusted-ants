@@ -1,9 +1,12 @@
 #[macro_use] extern crate log;
 extern crate simplelog;
 extern crate tsplib;
+extern crate rand;
 
 mod utils;
+mod ant;
 use utils::sparse_matrix::SparseMatrix;
+use ant::Ant;
 
 fn set_logger(level: u64) {
     use simplelog::*;
@@ -18,6 +21,7 @@ fn set_logger(level: u64) {
     };
 
     TermLogger::init(log_level, Config::default(), TerminalMode::Stderr).unwrap();
+    trace!("{}", level);
 }
 
 fn main() {
@@ -47,8 +51,11 @@ fn main() {
     set_logger(matches.occurrences_of("verbose"));
 
     let file_path = matches.value_of("input").unwrap();
-    let _r = utils::loader::open(file_path);
-    let _matrix = SparseMatrix::new_from_instace(_r.unwrap());
+    let r = utils::loader::open(file_path);
+    let matrix = SparseMatrix::new_from_instace(r.unwrap());
 
-    println!("{:?}", _matrix);
+    let mut ant = Ant::new(&matrix);
+    ant.find_circuit(0);
+
+    println!("{:?}", ant.path);
 }
